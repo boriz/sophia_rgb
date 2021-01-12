@@ -5,6 +5,8 @@
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(150, DO_PIN, NEO_GRB + NEO_KHZ800);
 
+
+// ================================================================
 void setup() 
 {
   // Initialize all pixels to 'off'
@@ -14,44 +16,73 @@ void setup()
   strip.setBrightness(127); // 0 = off; 255=max brightness
   allSet(0);
   strip.show(); 
+
+  // Initialize random generator
+  randomSeed(analogRead(0));  
 }
  
 
+// ================================================================
 void loop() 
 {
   // A few standard effects Sophia liked
-  // TODO: Make sequence random with random colors
+  // Select a random effect from this bunch
+  int effect = random(1, 5);
+  byte color = random(0, 255);
   
-  // A few chases
-  theaterChase(strip.Color(0, 0, 255), 30);  // Blue
-  theaterChase(strip.Color(255, 0, 0), 30);  // Red
-  theaterChase(strip.Color(0, 255, 0), 30);  // Green
-  theaterChaseRainbow(30);
-  theaterChaseRainbow(30);
-  theaterChaseRainbow(30);
-  allSet(0); 
-  
-  // Wipes
-  colorWipe(strip.Color(255, 0, 0), 50);  // Red  
-  colorWipe(strip.Color(0, 0, 255), 50);  // Blue
-  colorWipe(strip.Color(0, 255, 0), 50);  // Green
-  allSet(0); 
-
-  // Standard rainbow
-  rainbow(20);
-  rainbow(20);
-  rainbow(20);
-  rainbow(20);
-  rainbow(20);
-  allSet(0); 
-  
-  // Equal rainbow
-  rainbowCycle(20);
-  rainbowCycle(20);
-  allSet(0); 
+  switch(effect)
+  {
+    case 1:
+        // Chase effect
+        // Repeat a few times
+        for (int i=0; i < random(1, 3); i++)
+        {
+          color = random(0, 255);
+          theaterChase(Wheel(color), 30);
+        }
+        break;
+      
+    case 2:
+        // Rainbow chase
+        // Repeat a few times
+        for (int i=0; i < random(1, 3); i++)
+        {
+          theaterChaseRainbow(30);
+        }
+        break;
+        
+    case 3:
+        // Wipe effect
+        // Repeat a few times
+        for (int i=0; i < random(2, 5); i++)
+        {
+          color = random(0, 255);
+          colorWipe(Wheel(color), 20);
+        }
+        break;
+        
+    case 4:
+        // Standard rainbow
+        // Repeat a few times
+        for (int i=0; i < random(3, 7); i++)
+        {
+          rainbow(20);
+        }
+        break;
+        
+    case 5:
+        // Equal ranbow
+        // Repeat a few times
+        for (int i=0; i < random(1, 3); i++)
+        {
+          rainbowCycle(20);
+        }
+        break;
+  }
 }
 
 
+// ================================================================
 // Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) 
 {
@@ -64,6 +95,7 @@ void colorWipe(uint32_t c, uint8_t wait)
 }
 
 
+// Set all pixels to the same color
 void allSet(uint32_t c)
 {
   for (int i=0; i < strip.numPixels(); i++) 
@@ -96,6 +128,8 @@ void runningDots(uint32_t c, uint32_t dots, uint8_t wait)
   }
 }
 
+
+// Rainbow effect
 void rainbow(uint8_t wait) {
   uint16_t i, j;
 
@@ -127,6 +161,7 @@ void rainbowCycle(uint8_t wait) {
   }
 }
 
+
 //Theatre-style crawling lights.
 void theaterChase(uint32_t c, uint8_t wait) 
 {
@@ -149,6 +184,7 @@ void theaterChase(uint32_t c, uint8_t wait)
     }
   }
 }
+
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
